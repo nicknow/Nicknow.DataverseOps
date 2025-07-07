@@ -1,8 +1,8 @@
 #  DataverseOps
 > __Easy Parallel and Batch Ops w/ Microsoft Dataverse SDK__
 >
-**Repository**: https://github.com/nicknow/DataverseOps  
-**NuGet Package**: [DataverseOps](https://www.nuget.org/packages/DataverseOps)
+**Repository**: https://github.com/nicknow/Nicknow.DataverseOps  
+**NuGet Package**: [DataverseOps](https://www.nuget.org/packages/Nicknow.DataverseOps)
 
 A .NET class library that simplifies parallel and batch operations using the Microsoft Dataverse SDK. DataverseOps enables high-performance data operations by executing multiple requests concurrently, significantly reducing processing time for bulk operations.
 
