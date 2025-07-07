@@ -53,7 +53,8 @@ jobs:
       run: dotnet pack src/DataverseOps/DataverseOps.csproj --configuration Release --no-build -o ./nupkg
 
     - name: Publish to NuGet
-      run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+      continue-on-error: true
+      run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
