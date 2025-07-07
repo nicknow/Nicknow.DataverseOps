@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+   <LangVersion>11.0</LangVersion>
+</PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Nicknow.DataverseOps</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>Nicolas A. Nowinski</Authors>    
+    <Description>A class library that support parallel and batch operations using the Microsoft Dataverse SDK.</Description>
+    <PackageTags>Dynamics 365;Dataverse</PackageTags>
+    <RepositoryUrl>https://github.com/nicknow/DataverseOps</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.MD</PackageReadmeFile>
+    <PackageReleaseNotes>[PLACEHOLDER REPLACED BY GITHUB PUBLISH ACTION]</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.MD">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="[1.2.9,2.0)" />
+  </ItemGroup>
+
+</Project>

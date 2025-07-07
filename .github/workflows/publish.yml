@@ -1,0 +1,62 @@
+name: Publish DataverseOps NuGet Package
+
+on:
+  push:
+    tags:
+      - 'v*'            # Matches tags like v1.0.0
+      - 'v*-*'          # Matches tags like v1.2.0-beta
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Extract version from tag
+      id: vars
+      run: echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
+    - name: Set version in .csproj      
+      run: |
+        VERSION=${{ steps.vars.outputs.version }}
+        echo "VERSION: $VERSION"        
+        sed -i "s|<Version>.*</Version>|<Version>$VERSION</Version>|" src/DataverseOps/DataverseOps.csproj
+    
+    - name: Extract release notes from CHANGELOG.md
+      id: changelog
+      run: |
+        notes=$(awk "/^## \[${{ steps.vars.outputs.version }}\]/,/^## \[/" CHANGELOG.md | sed '$d' | tail -n +2)
+        echo "notes<<EOF" >> $GITHUB_OUTPUT
+        echo "$notes" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Inject release notes into .csproj
+      run: |
+        escaped_notes=$(echo "${{ steps.changelog.outputs.notes }}" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')
+        sed -i "s|<PackageReleaseNotes>.*</PackageReleaseNotes>|<PackageReleaseNotes>${escaped_notes}</PackageReleaseNotes>|" src/DataverseOps/DataverseOps.csproj
+        
+    - name: Restore dependencies
+      run: dotnet restore src/DataverseOps/DataverseOps.csproj
+
+    - name: Build
+      run: dotnet build src/DataverseOps/DataverseOps.csproj --configuration Release --no-restore
+
+    - name: Pack
+      run: dotnet pack src/DataverseOps/DataverseOps.csproj --configuration Release --no-build -o ./nupkg
+
+    - name: Publish to NuGet
+      run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
+        body: ${{ steps.changelog.outputs.notes }}
+        prerelease: ${{ contains(github.ref_name, '-') }}
+        files: ./nupkg/*.nupkg
