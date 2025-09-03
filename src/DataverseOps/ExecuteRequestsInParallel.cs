@@ -261,9 +261,16 @@ namespace DataverseOps
                 _logger.LogTrace($"START | Executing request: {request.GetType().Name}. Internal Transaction Id: {transactionId}");
 
                 var startTime = DateTime.Now;
-                sw?.Start();
-                var response = _serviceClient.Execute(request) as TResponse;
-                sw?.Stop();
+                TResponse? response = null;
+               
+                // Use cloned instance to ensure thread safety
+                using (var instanceServices = _serviceClient.Clone())
+                {
+                    sw?.Start();
+                    response = instanceServices.Execute(request) as TResponse;
+                    sw?.Stop();
+                }
+
                 var stopTime = DateTime.Now;
 
                 _logger.LogTrace($"FINISH | Execute Success: {request.GetType().Name}. Internal Transaction Id: {transactionId}");

@@ -62,3 +62,4 @@ _ReSharper*/
 
 # Azure Pipelines
 .azure-pipelines/
+/src/DataverseOps.ConsoleDemo/App.config
